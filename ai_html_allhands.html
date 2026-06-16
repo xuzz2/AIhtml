@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI × HTML — Making Everything Simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy:   #0A0F1E;
+    --card:   #141B2D;
+    --card2:  #1E2A45;
+    --cyan:   #00D4FF;
+    --cyan2:  #00A8CC;
+    --amber:  #FFB347;
+    --green:  #4AE68A;
+    --purple: #B47FFF;
+    --pink:   #FF79C6;
+    --text:   #F0F4FF;
+    --muted:  #8899BB;
+    --border: rgba(0,212,255,0.18);
+  }
+  html, body { width:100%; height:100%; background:var(--navy); color:var(--text); font-family:'Inter',sans-serif; overflow:hidden; -webkit-font-smoothing:antialiased; }
+
+  /* ── SLIDES ── */
+  .deck { width:100vw; height:100vh; position:relative; }
+  .slide { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:44px 60px; opacity:0; pointer-events:none; transform:translateY(40px); transition:opacity .5s ease, transform .5s ease; }
+  .slide.active { opacity:1; pointer-events:all; transform:translateY(0); }
+  .slide.exit-up   { opacity:0; transform:translateY(-40px); transition:opacity .4s ease, transform .4s ease; }
+  .slide.exit-down { opacity:0; transform:translateY(40px);  transition:opacity .4s ease, transform .4s ease; }
+
+  /* ── NAV ── */
+  .nav { position:fixed; bottom:28px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:16px; background:rgba(20,27,45,0.88); border:1px solid var(--border); border-radius:40px; padding:10px 24px; backdrop-filter:blur(12px); z-index:100; }
+  .nav button { background:none; border:none; cursor:pointer; color:var(--muted); font-size:18px; padding:4px 10px; border-radius:20px; transition:color .2s,background .2s; }
+  .nav button:hover { color:var(--cyan); background:rgba(0,212,255,0.08); }
+  .nav button:disabled { opacity:.3; cursor:default; }
+  .slide-counter { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted); min-width:52px; text-align:center; }
+  .dots { display:flex; gap:7px; align-items:center; }
+  .dot { width:7px; height:7px; border-radius:50%; background:var(--card2); border:1px solid var(--border); cursor:pointer; transition:background .2s,transform .2s; }
+  .dot.active { background:var(--cyan); transform:scale(1.3); }
+
+  /* ── TYPE ── */
+  .eyebrow { font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.15em; text-transform:uppercase; color:var(--cyan); margin-bottom:14px; }
+  h1 { font-family:'Space Grotesk',sans-serif; font-size:clamp(2.8rem,5.5vw,4.8rem); font-weight:700; line-height:1.05; letter-spacing:-.02em; }
+  h2 { font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,3.5vw,3rem); font-weight:600; line-height:1.1; letter-spacing:-.02em; }
+  h3 { font-family:'Space Grotesk',sans-serif; font-size:1.05rem; font-weight:600; }
+  p  { font-size:1rem; line-height:1.65; color:rgba(240,244,255,.8); }
+  .lead { font-size:1.15rem; line-height:1.6; color:rgba(240,244,255,.85); max-width:680px; text-align:center; }
+  .accent { color:var(--cyan); }
+  .amber  { color:var(--amber); }
+  .green  { color:var(--green); }
+  .purple { color:var(--purple); }
+  code { font-family:'JetBrains Mono',monospace; }
+
+  /* ── CARDS ── */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; }
+  .card-grid { display:grid; gap:18px; width:100%; }
+  .card-grid.cols-2 { grid-template-columns:repeat(2,1fr); }
+
+  /* ── HERO ── */
+  #hero-canvas { position:absolute; inset:0; pointer-events:none; opacity:.35; }
+  #slide-1 { text-align:center; }
+  #slide-1 h1 span { display:block; }
+  #slide-1 h1 .line2 { color:var(--cyan); }
+  .hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(0,212,255,0.08); border:1px solid var(--border); border-radius:30px; padding:7px 18px; font-family:'JetBrains Mono',monospace; font-size:.85rem; color:var(--cyan); margin-bottom:32px; }
+  .hero-badge::before { content:'●'; font-size:.55rem; animation:blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
+
+  /* ── SLIDE 2: WHAT IS HTML ── */
+  .what-layout { display:flex; gap:40px; align-items:center; width:100%; max-width:1000px; }
+  .what-text { flex:1; }
+  .what-text h2 { margin-bottom:18px; }
+  .what-text p  { margin-bottom:12px; }
+  .file-card { flex:0 0 300px; background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+  .file-bar { background:var(--card2); padding:10px 16px; display:flex; align-items:center; gap:8px; }
+  .file-dot { width:11px; height:11px; border-radius:50%; }
+  .file-name { font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--muted); margin-left:6px; }
+  pre { font-family:'JetBrains Mono',monospace; font-size:.77rem; line-height:1.6; padding:18px; color:rgba(240,244,255,.75); }
+  .kw  { color:#FF79C6; }
+  .tag { color:var(--cyan); }
+  .str { color:var(--amber); }
+  .val { color:var(--green); }
+  .com { color:#6272A4; font-style:italic; }
+
+  /* ── SLIDE 3: LIVE DEMO ── */
+  #slide-3 { align-items:stretch; padding:36px 52px; }
+  #slide-3 h2 { text-align:center; margin-bottom:20px; flex-shrink:0; }
+  .demo-split { display:grid; grid-template-columns:1fr 1fr; gap:0; flex:1; border:1px solid var(--border); border-radius:16px; overflow:hidden; min-height:0; }
+  .demo-pane { display:flex; flex-direction:column; min-height:0; }
+  .demo-pane-header { background:var(--card2); padding:9px 18px; display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--muted); border-bottom:1px solid var(--border); flex-shrink:0; }
+  .demo-pane-header .label { color:var(--cyan); }
+  #demo-code { flex:1; font-family:'JetBrains Mono',monospace; font-size:.8rem; line-height:1.65; padding:18px; background:#0D1220; color:rgba(240,244,255,.8); border:none; resize:none; outline:none; border-right:1px solid var(--border); min-height:0; }
+  #demo-preview { flex:1; background:#fff; border:none; min-height:0; }
+  .demo-hint { text-align:center; margin-top:11px; font-size:.83rem; color:var(--muted); flex-shrink:0; }
+
+  /* ── SLIDE 4: USE CASES ── */
+  .use-card { position:relative; overflow:hidden; }
+  .use-card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,var(--glow,transparent),transparent); pointer-events:none; }
+  .use-case-tag { font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--muted); letter-spacing:.1em; margin-bottom:7px; text-transform:uppercase; }
+  .use-card-icon { font-size:1.6rem; margin-bottom:8px; }
+  .use-card h3 { font-size:1rem; margin-bottom:6px; }
+  .use-card .example-label { font-size:.72rem; font-family:'JetBrains Mono',monospace; color:var(--cyan); text-transform:uppercase; letter-spacing:.1em; margin-top:10px; margin-bottom:4px; }
+  .use-card .example-name { font-size:.9rem; font-weight:600; color:var(--text); font-family:'Space Grotesk',sans-serif; }
+  .use-card .example-desc { font-size:.83rem; color:var(--muted); margin-top:3px; }
+
+  /* ── SLIDE 5: AI WORKFLOW ── */
+  .flow { display:flex; align-items:center; max-width:900px; width:100%; margin:28px auto 0; }
+  .flow-step { flex:1; text-align:center; padding:20px 14px; background:var(--card); border:1px solid var(--border); border-radius:14px; }
+  .flow-arrow { font-size:1.4rem; color:var(--cyan); padding:0 8px; flex:0 0 auto; }
+  .flow-step-num { font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--cyan); margin-bottom:7px; }
+  .flow-step-icon { font-size:1.6rem; margin-bottom:8px; }
+  .flow-step h3 { font-size:.9rem; margin-bottom:5px; }
+  .flow-step p  { font-size:.8rem; color:var(--muted); }
+  .prompt-box { max-width:680px; margin:24px auto 0; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 22px; font-family:'JetBrains Mono',monospace; font-size:.8rem; line-height:1.6; color:rgba(240,244,255,.7); }
+  .prompt-box .cursor { display:inline-block; width:9px; height:1em; background:var(--cyan); vertical-align:text-bottom; animation:blink 1s infinite; margin-left:2px; }
+
+  /* ── SLIDE 6: GITHUB PAGES ── */
+  #slide-6 { padding:40px 60px; }
+  #slide-6 h2 { text-align:center; margin-bottom:8px; }
+  #slide-6 .lead { margin:0 auto 28px; font-size:.95rem; }
+  .github-steps { display:grid; grid-template-columns:repeat(5,1fr); gap:0; max-width:1000px; width:100%; align-items:start; }
+  .gh-step { text-align:center; padding:0 10px; position:relative; }
+  .gh-step:not(:last-child)::after { content:'→'; position:absolute; right:-10px; top:28px; font-size:1.1rem; color:var(--cyan); }
+  .gh-step-circle { width:56px; height:56px; border-radius:50%; border:2px solid var(--cyan); background:rgba(0,212,255,0.08); display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin:0 auto 12px; }
+  .gh-step-num { font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--cyan); margin-bottom:6px; }
+  .gh-step h3 { font-size:.88rem; margin-bottom:5px; }
+  .gh-step p { font-size:.78rem; color:var(--muted); line-height:1.45; }
+  .gh-step code { font-size:.72rem; color:var(--amber); background:rgba(255,179,71,0.1); padding:1px 5px; border-radius:4px; }
+  .url-result { max-width:680px; margin:24px auto 0; display:flex; align-items:center; gap:12px; background:rgba(74,230,138,0.07); border:1px solid rgba(74,230,138,0.25); border-radius:12px; padding:14px 22px; }
+  .url-result .lock { font-size:1rem; }
+  .url-result .url-text { font-family:'JetBrains Mono',monospace; font-size:.9rem; color:var(--green); }
+  .url-result .url-note { font-size:.8rem; color:var(--muted); margin-top:2px; }
+
+  /* ── SLIDE 7: CLOSING ── */
+  #slide-7 { text-align:center; }
+  .closing-pills { display:flex; gap:18px; justify-content:center; margin-top:32px; flex-wrap:wrap; }
+  .closing-pill { background:var(--card); border:1px solid var(--border); border-radius:40px; padding:11px 26px; font-family:'Space Grotesk',sans-serif; font-size:.95rem; font-weight:500; display:flex; align-items:center; gap:10px; }
+  .big-tagline { font-size:clamp(1.5rem,3.2vw,2.6rem); font-family:'Space Grotesk',sans-serif; font-weight:700; margin-top:0; }
+  .big-tagline .line { display:block; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- ━━━━ SLIDE 1: HERO ━━━━ -->
+<div class="slide active" id="slide-1">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-badge">Department All-Hands · AI Series</div>
+  <h1>
+    <span>The Simplest</span>
+    <span class="line2">Format on the Web</span>
+  </h1>
+  <p style="margin-top:18px;font-size:1.1rem;color:var(--muted);letter-spacing:.03em">
+    How a plain <code style="color:var(--amber)">.html</code> file — made with AI — can become your most powerful tool
+  </p>
+</div>
+
+<!-- ━━━━ SLIDE 2: WHAT IS HTML ━━━━ -->
+<div class="slide" id="slide-2">
+  <div class="what-layout">
+    <div class="what-text">
+      <div class="eyebrow">The Basics</div>
+      <h2>What is an <span class="accent">HTML file?</span></h2>
+      <p>HTML is just a text file with a <code style="color:var(--amber)">.html</code> extension. Save it to your desktop, double-click it — and it opens instantly in any browser, with no internet required.</p>
+      <p style="margin-top:12px">No app to install. No server to set up. No login. Just a file.</p>
+      <p style="margin-top:12px">Inside that file, you describe <em>what</em> to show — text, charts, buttons, forms — and the browser handles the rest.</p>
+      <p style="margin-top:18px;color:var(--cyan);font-family:'Space Grotesk',sans-serif;font-weight:600">And today, you don't need to write any of it yourself.</p>
+    </div>
+    <div class="file-card">
+      <div class="file-bar">
+        <div class="file-dot" style="background:#FF5F57"></div>
+        <div class="file-dot" style="background:#FFBD2E"></div>
+        <div class="file-dot" style="background:#28C840"></div>
+        <span class="file-name">my_tool.html</span>
+      </div>
+      <pre><span class="com">&lt;!-- A complete, runnable file --&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>My Report<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Q2 Sales Dashboard<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;canvas</span> <span class="kw">id=</span><span class="str">"chart"</span><span class="tag">&gt;&lt;/canvas&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    <span class="com">// Charts, tables, logic …</span>
+    <span class="kw">const</span> data = [<span class="val">42</span>, <span class="val">58</span>, <span class="val">71</span>, <span class="val">90</span>];
+    <span class="com">// AI generated all of this</span>
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━ SLIDE 3: LIVE DEMO ━━━━ -->
+<div class="slide" id="slide-3">
+  <h2>Edit the code → <span class="accent">See it live</span></h2>
+  <div class="demo-split">
+    <div class="demo-pane">
+      <div class="demo-pane-header">
+        <span>📝</span> <span class="label">HTML Code</span>
+        <span style="margin-left:auto;font-size:.7rem">(edit me!)</span>
+      </div>
+      <textarea id="demo-code" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    body {
+      font-family: sans-serif;
+      background: #f0f8ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h1 { color: #0A5C8A; }
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      height: 160px;
+      margin-top: 24px;
+    }
+    .bar {
+      width: 48px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 4px;
+      color: white;
+      font-size: 13px;
+      font-weight: bold;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;📊 Q2 Sales&lt;/h1&gt;
+  &lt;p&gt;An HTML file — no server needed!&lt;/p&gt;
+  &lt;div class="bar-chart"&gt;
+    &lt;div class="bar"
+      style="height:80px;background:#00A8CC"&gt;Apr&lt;/div&gt;
+    &lt;div class="bar"
+      style="height:115px;background:#0084A8"&gt;May&lt;/div&gt;
+    &lt;div class="bar"
+      style="height:150px;background:#005F80"&gt;Jun&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+    </div>
+    <div class="demo-pane">
+      <div class="demo-pane-header">
+        <span>🌐</span> <span class="label">Browser Preview</span>
+        <span style="margin-left:auto;font-size:.7rem">live render</span>
+      </div>
+      <iframe id="demo-preview"></iframe>
+    </div>
+  </div>
+  <p class="demo-hint">✏️ Click into the code on the left and make a change — watch it update on the right in real time</p>
+</div>
+
+<!-- ━━━━ SLIDE 4: USE CASES (real examples) ━━━━ -->
+<div class="slide" id="slide-4">
+  <div class="eyebrow">What you can build — real examples from our team</div>
+  <h2>Four Things an <span class="accent">HTML File</span> Can Do</h2>
+  <div class="card-grid cols-2" style="margin-top:22px;max-width:960px">
+
+    <div class="card use-card" style="--glow:rgba(0,212,255,0.07)">
+      <div class="use-case-tag">Use Case 01</div>
+      <div class="use-card-icon">📊</div>
+      <h3>Data Visualization</h3>
+      <p style="font-size:.88rem;color:var(--muted)">Turn a spreadsheet into interactive charts — rendered right in the browser, no Excel required.</p>
+      <div class="example-label">Our example</div>
+      <div class="example-name">Accrual Summary 1.0</div>
+      <div class="example-desc">Monthly accrual data visualized as interactive charts — filterable by category, shareable as a single file</div>
+    </div>
+
+    <div class="card use-card" style="--glow:rgba(255,179,71,0.07)">
+      <div class="use-case-tag">Use Case 02</div>
+      <div class="use-card-icon">🛠️</div>
+      <h3>Small Productivity Tools</h3>
+      <p style="font-size:.88rem;color:var(--muted)">Purpose-built micro-tools for your team's exact workflow — calculators, formatters, converters.</p>
+      <div class="example-label">Our example</div>
+      <div class="example-name">Excel Order Number Formatter 1.0</div>
+      <div class="example-desc">Paste raw order numbers in, get properly formatted output ready for Excel — no macros, no setup</div>
+    </div>
+
+    <div class="card use-card" style="--glow:rgba(180,127,255,0.07)">
+      <div class="use-case-tag">Use Case 03</div>
+      <div class="use-card-icon">🖥️</div>
+      <h3>System Demos & Mockups</h3>
+      <p style="font-size:.88rem;color:var(--muted)">Show how a product, workflow, or idea will look — clickable and realistic — before anything is built.</p>
+      <div class="example-label">Already happening in our org</div>
+      <div class="example-name">Mudd, Managers & DT/IT Team</div>
+      <div class="example-desc">Using HTML to demo ideas and requirements — more clarity, faster alignment, better conversations with stakeholders</div>
+    </div>
+
+    <div class="card use-card" style="--glow:rgba(74,230,138,0.07)">
+      <div class="use-case-tag">Use Case 04</div>
+      <div class="use-card-icon">📋</div>
+      <h3>Reports & Presentations</h3>
+      <p style="font-size:.88rem;color:var(--muted)">Interactive decks and polished reports that anyone can open — no PowerPoint, no special software.</p>
+      <div class="example-label">Meta example</div>
+      <div class="example-name">This All-Hands Presentation</div>
+      <div class="example-desc">What you're watching right now is an HTML file — keyboard navigation, live demo, all in one file</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ━━━━ SLIDE 5: AI WORKFLOW ━━━━ -->
+<div class="slide" id="slide-5">
+  <div class="eyebrow">The AI Workflow</div>
+  <h2>From <span class="accent">Prompt</span> to File in Minutes</h2>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-step-num">01</div>
+      <div class="flow-step-icon">💬</div>
+      <h3>Describe it</h3>
+      <p>Tell AI what you need in plain language</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-step-num">02</div>
+      <div class="flow-step-icon">✨</div>
+      <h3>AI generates</h3>
+      <p>Full HTML file created in seconds</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-step-num">03</div>
+      <div class="flow-step-icon">💾</div>
+      <h3>Save the file</h3>
+      <p>Copy, paste, save as <code style="color:var(--amber);font-size:.8rem">.html</code></p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-step-num">04</div>
+      <div class="flow-step-icon">🖱️</div>
+      <h3>Double-click</h3>
+      <p>Opens instantly in any browser</p>
+    </div>
+  </div>
+  <div class="prompt-box">
+    <span style="color:var(--cyan)">You:</span> "Create an HTML file with an interactive bar chart showing monthly accrual data Jan–Jun. Include a filter by category and a clean blue theme."<span class="cursor"></span>
+  </div>
+  <p style="text-align:center;margin-top:16px;font-size:.86rem;color:var(--muted)">No coding knowledge required. Iterate by describing what to change.</p>
+</div>
+
+<!-- ━━━━ SLIDE 6: GITHUB PAGES ━━━━ -->
+<div class="slide" id="slide-6">
+  <div class="eyebrow">Publishing to the Web — the Easiest Way</div>
+  <h2>GitHub Pages: <span class="green">Free Hosting in 5 Steps</span></h2>
+  <p class="lead">Your local HTML file becomes a live URL anyone can open — no server, no cost, no backend. Just GitHub.</p>
+
+  <div class="github-steps">
+    <div class="gh-step">
+      <div class="gh-step-num">STEP 01</div>
+      <div class="gh-step-circle">🐙</div>
+      <h3>Create a GitHub account</h3>
+      <p>Free at <code>github.com</code> — takes 2 minutes</p>
+    </div>
+    <div class="gh-step">
+      <div class="gh-step-num">STEP 02</div>
+      <div class="gh-step-circle">📁</div>
+      <h3>Create a repository</h3>
+      <p>Click <strong style="color:var(--text)">New</strong> → name it, set to <strong style="color:var(--text)">Public</strong></p>
+    </div>
+    <div class="gh-step">
+      <div class="gh-step-num">STEP 03</div>
+      <div class="gh-step-circle">⬆️</div>
+      <h3>Upload your file</h3>
+      <p>Drag & drop your <code>.html</code> file. Name it <code>index.html</code></p>
+    </div>
+    <div class="gh-step">
+      <div class="gh-step-num">STEP 04</div>
+      <div class="gh-step-circle">⚙️</div>
+      <h3>Enable Pages</h3>
+      <p>Settings → Pages → Branch: <code>main</code> → Save</p>
+    </div>
+    <div class="gh-step">
+      <div class="gh-step-num">STEP 05</div>
+      <div class="gh-step-circle">🎉</div>
+      <h3>Your site is live</h3>
+      <p>GitHub gives you a public URL in ~60 seconds</p>
+    </div>
+  </div>
+
+  <div class="url-result">
+    <span class="lock">🔒</span>
+    <div>
+      <div class="url-text">https://your-username.github.io/accrual-summary/</div>
+      <div class="url-note">Anyone in the world can open this — on any device, any browser, no login</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━ SLIDE 7: CLOSING ━━━━ -->
+<div class="slide" id="slide-7">
+  <div class="eyebrow">The Takeaway</div>
+  <div class="big-tagline">
+    <span class="line">One file.</span>
+    <span class="line">Any browser.</span>
+    <span class="line accent">AI makes it simple.</span>
+  </div>
+  <div class="closing-pills">
+    <div class="closing-pill">📊 Accrual Summary 1.0</div>
+    <div class="closing-pill">🛠️ Order Number Formatter 1.0</div>
+    <div class="closing-pill">🖥️ Team system demos</div>
+    <div class="closing-pill">🌐 GitHub Pages — free hosting</div>
+  </div>
+  <p style="margin-top:30px;color:var(--muted);font-size:.98rem;max-width:560px;text-align:center">
+    You don't need to learn to code. Just describe what you need.<br>
+    <span style="color:var(--cyan);font-weight:600">That's the power of AI × HTML.</span>
+  </p>
+  <div style="margin-top:28px;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:rgba(136,153,187,.45)">
+    This presentation is itself an HTML file · No apps required · Made with AI
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <button id="btn-prev" disabled>←</button>
+  <div class="dots" id="dots"></div>
+  <span class="slide-counter" id="counter">1 / 7</span>
+  <button id="btn-next">→</button>
+</div>
+
+<script>
+const TOTAL = 7;
+let current = 1;
+
+function goTo(n, dir) {
+  const prev = document.getElementById('slide-' + current);
+  prev.classList.remove('active');
+  prev.classList.add(dir === 1 ? 'exit-up' : 'exit-down');
+  setTimeout(() => prev.classList.remove('exit-up','exit-down'), 450);
+  current = n;
+  const next = document.getElementById('slide-' + current);
+  next.style.transform = dir === 1 ? 'translateY(40px)' : 'translateY(-40px)';
+  requestAnimationFrame(() => { next.classList.add('active'); next.style.transform = ''; });
+  document.getElementById('counter').textContent = current + ' / ' + TOTAL;
+  document.getElementById('btn-prev').disabled = current === 1;
+  document.getElementById('btn-next').disabled = current === TOTAL;
+  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i+1 === current));
+  if (current === 3) initDemo();
+}
+
+document.getElementById('btn-prev').addEventListener('click', () => { if(current>1) goTo(current-1,-1); });
+document.getElementById('btn-next').addEventListener('click', () => { if(current<TOTAL) goTo(current+1,1); });
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key==='ArrowDown') { if(current<TOTAL) goTo(current+1,1); }
+  if (e.key==='ArrowLeft' ||e.key==='ArrowUp')   { if(current>1)     goTo(current-1,-1); }
+});
+
+const dotsEl = document.getElementById('dots');
+for (let i=1;i<=TOTAL;i++) {
+  const d = document.createElement('div');
+  d.className = 'dot'+(i===1?' active':'');
+  d.addEventListener('click', () => { if(i!==current) goTo(i,i>current?1:-1); });
+  dotsEl.appendChild(d);
+}
+
+// Hero particles
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resize() { canvas.width=innerWidth; canvas.height=innerHeight; }
+resize(); window.addEventListener('resize', resize);
+for(let i=0;i<80;i++) particles.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.5+.5,dx:(Math.random()-.5)*.4,dy:(Math.random()-.5)*.4,a:Math.random()});
+function animP() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,212,255,${p.a*.6})`; ctx.fill();
+  });
+  for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++) {
+    const d=Math.hypot(particles[i].x-particles[j].x,particles[i].y-particles[j].y);
+    if(d<120){ ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); ctx.strokeStyle=`rgba(0,212,255,${(1-d/120)*.15})`; ctx.lineWidth=.5; ctx.stroke(); }
+  }
+  requestAnimationFrame(animP);
+}
+animP();
+
+// Live demo
+let demoInited = false;
+function initDemo() {
+  if(demoInited) return; demoInited=true;
+  const ta=document.getElementById('demo-code');
+  const fr=document.getElementById('demo-preview');
+  function update() { const doc=fr.contentDocument||fr.contentWindow.document; doc.open(); doc.write(ta.value); doc.close(); }
+  ta.addEventListener('input', update);
+  update();
+}
+</script>
+</body>
+</html>
