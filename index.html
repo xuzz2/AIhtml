@@ -117,22 +117,44 @@
   .prompt-box { max-width:680px; margin:24px auto 0; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 22px; font-family:'JetBrains Mono',monospace; font-size:.8rem; line-height:1.6; color:rgba(240,244,255,.7); }
   .prompt-box .cursor { display:inline-block; width:9px; height:1em; background:var(--cyan); vertical-align:text-bottom; animation:blink 1s infinite; margin-left:2px; }
 
-  /* ── SLIDE 6: GITHUB PAGES ── */
-  #slide-6 { padding:40px 60px; }
-  #slide-6 h2 { text-align:center; margin-bottom:8px; }
-  #slide-6 .lead { margin:0 auto 28px; font-size:.95rem; }
-  .github-steps { display:grid; grid-template-columns:repeat(5,1fr); gap:0; max-width:1000px; width:100%; align-items:start; }
-  .gh-step { text-align:center; padding:0 10px; position:relative; }
-  .gh-step:not(:last-child)::after { content:'→'; position:absolute; right:-10px; top:28px; font-size:1.1rem; color:var(--cyan); }
-  .gh-step-circle { width:56px; height:56px; border-radius:50%; border:2px solid var(--cyan); background:rgba(0,212,255,0.08); display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin:0 auto 12px; }
-  .gh-step-num { font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--cyan); margin-bottom:6px; }
-  .gh-step h3 { font-size:.88rem; margin-bottom:5px; }
-  .gh-step p { font-size:.78rem; color:var(--muted); line-height:1.45; }
-  .gh-step code { font-size:.72rem; color:var(--amber); background:rgba(255,179,71,0.1); padding:1px 5px; border-radius:4px; }
-  .url-result { max-width:680px; margin:24px auto 0; display:flex; align-items:center; gap:12px; background:rgba(74,230,138,0.07); border:1px solid rgba(74,230,138,0.25); border-radius:12px; padding:14px 22px; }
-  .url-result .lock { font-size:1rem; }
-  .url-result .url-text { font-family:'JetBrains Mono',monospace; font-size:.9rem; color:var(--green); }
-  .url-result .url-note { font-size:.8rem; color:var(--muted); margin-top:2px; }
+  /* ── SLIDE 6: TEAM HUB ── */
+  #slide-6 { padding:36px 56px; justify-content:flex-start; padding-top:44px; }
+  #slide-6 .slide-header { text-align:center; margin-bottom:28px; width:100%; }
+  #slide-6 .slide-header h2 { margin-bottom:6px; }
+  #slide-6 .slide-header p { font-size:.93rem; color:var(--muted); }
+
+  /* vision banner */
+  .hub-vision { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:26px; }
+  .hub-vision-icon { font-size:2rem; }
+  .hub-vision-text h3 { font-size:1.15rem; color:var(--text); margin-bottom:3px; }
+  .hub-vision-text p  { font-size:.85rem; color:var(--muted); }
+
+  /* phase track */
+  .phase-track { display:grid; grid-template-columns:1fr 52px 1fr 52px 1fr; align-items:center; gap:0; width:100%; max-width:980px; }
+  .phase-arrow { text-align:center; font-size:1.3rem; color:var(--muted); }
+  .phase { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:22px 20px; position:relative; overflow:hidden; }
+  .phase::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,var(--ph-glow,transparent),transparent); pointer-events:none; }
+  .phase-badge { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; padding:3px 10px; border-radius:20px; margin-bottom:12px; border:1px solid; }
+  .phase-icon { font-size:1.8rem; margin-bottom:10px; }
+  .phase-title { font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:600; margin-bottom:4px; }
+  .phase-subtitle { font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--muted); margin-bottom:12px; }
+  .phase-items { list-style:none; padding:0; }
+  .phase-items li { font-size:.82rem; color:var(--muted); padding:4px 0; padding-left:16px; position:relative; line-height:1.4; }
+  .phase-items li::before { content:'·'; position:absolute; left:4px; color:var(--ph-accent,var(--cyan)); font-size:1rem; line-height:1.2; }
+  .phase-items li strong { color:var(--text); font-weight:500; }
+
+  .ph1 { --ph-glow:rgba(255,179,71,0.06); --ph-accent:var(--amber); }
+  .ph1 .phase-badge { color:var(--amber); border-color:rgba(255,179,71,.35); background:rgba(255,179,71,.07); }
+  .ph1 .phase-icon::after { content:''; }
+  .ph2 { --ph-glow:rgba(0,212,255,0.06); --ph-accent:var(--cyan); }
+  .ph2 .phase-badge { color:var(--cyan); border-color:rgba(0,212,255,.3); background:rgba(0,212,255,.07); }
+  .ph3 { --ph-glow:rgba(74,230,138,0.06); --ph-accent:var(--green); }
+  .ph3 .phase-badge { color:var(--green); border-color:rgba(74,230,138,.3); background:rgba(74,230,138,.07); }
+
+  /* what lives on the hub */
+  .hub-contents { display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+  .hub-tag { font-size:.8rem; background:rgba(0,212,255,0.07); border:1px solid var(--border); border-radius:30px; padding:5px 14px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .hub-tag span { color:var(--text); }
 
   /* ── SLIDE 7: CLOSING ── */
   #slide-7 { text-align:center; }
@@ -351,73 +373,129 @@
   <p style="text-align:center;margin-top:16px;font-size:.86rem;color:var(--muted)">No coding knowledge required. Iterate by describing what to change.</p>
 </div>
 
-<!-- ━━━━ SLIDE 6: GITHUB PAGES ━━━━ -->
+<!-- ━━━━ SLIDE 6: TEAM HUB ROADMAP ━━━━ -->
 <div class="slide" id="slide-6">
-  <div class="eyebrow">Publishing to the Web — the Easiest Way</div>
-  <h2>GitHub Pages: <span class="green">Free Hosting in 5 Steps</span></h2>
-  <p class="lead">Your local HTML file becomes a live URL anyone can open — no server, no cost, no backend. Just GitHub.</p>
-
-  <div class="github-steps">
-    <div class="gh-step">
-      <div class="gh-step-num">STEP 01</div>
-      <div class="gh-step-circle">🐙</div>
-      <h3>Create a GitHub account</h3>
-      <p>Free at <code>github.com</code> — takes 2 minutes</p>
-    </div>
-    <div class="gh-step">
-      <div class="gh-step-num">STEP 02</div>
-      <div class="gh-step-circle">📁</div>
-      <h3>Create a repository</h3>
-      <p>Click <strong style="color:var(--text)">New</strong> → name it, set to <strong style="color:var(--text)">Public</strong></p>
-    </div>
-    <div class="gh-step">
-      <div class="gh-step-num">STEP 03</div>
-      <div class="gh-step-circle">⬆️</div>
-      <h3>Upload your file</h3>
-      <p>Drag & drop your <code>.html</code> file. Name it <code>index.html</code></p>
-    </div>
-    <div class="gh-step">
-      <div class="gh-step-num">STEP 04</div>
-      <div class="gh-step-circle">⚙️</div>
-      <h3>Enable Pages</h3>
-      <p>Settings → Pages → Branch: <code>main</code> → Save</p>
-    </div>
-    <div class="gh-step">
-      <div class="gh-step-num">STEP 05</div>
-      <div class="gh-step-circle">🎉</div>
-      <h3>Your site is live</h3>
-      <p>GitHub gives you a public URL in ~60 seconds</p>
-    </div>
+  <div class="slide-header">
+    <div class="eyebrow">What's Next — Our Shared Vision</div>
+    <h2>Building a <span class="accent">Team Hub</span> — Tools for Everyone, Always On</h2>
+    <p>Every tool, template, and skill guide our team builds — in one place, accessible 24/7, free to use and share</p>
   </div>
 
-  <div class="url-result">
-    <span class="lock">🔒</span>
-    <div>
-      <div class="url-text">https://xuzz2.github.io/AIhtml/</div>
-      <div class="url-note">Anyone in the world can open this — on any device, any browser, no login</div>
+  <div class="phase-track">
+
+    <!-- PHASE 1 -->
+    <div class="phase ph1">
+      <div class="phase-badge">Phase 1 · Now</div>
+      <div class="phase-icon">💻</div>
+      <div class="phase-title">One PC as a Server</div>
+      <div class="phase-subtitle">Start in days, zero cost</div>
+      <ul class="phase-items">
+        <li>Use any spare Windows or Mac machine</li>
+        <li>Run a simple local web server with AI's help</li>
+        <li><strong>All HTML tools hosted on the local network</strong></li>
+        <li>Team members open via IP address or name</li>
+        <li>Good for: internal access, fast iteration</li>
+      </ul>
     </div>
+
+    <div class="phase-arrow">→</div>
+
+    <!-- PHASE 2 -->
+    <div class="phase ph2">
+      <div class="phase-badge">Phase 2 · Growing</div>
+      <div class="phase-icon">🖥️</div>
+      <div class="phase-title">Dedicated Terminal</div>
+      <div class="phase-subtitle">Always on, more reliable</div>
+      <ul class="phase-items">
+        <li>A low-cost mini PC or refurbished terminal</li>
+        <li>Runs 24/7 without tying up anyone's laptop</li>
+        <li><strong>Stable local URL for the whole team</strong></li>
+        <li>Can host more tools, larger files, more users</li>
+        <li>Good for: reliability, team-wide adoption</li>
+      </ul>
+    </div>
+
+    <div class="phase-arrow">→</div>
+
+    <!-- PHASE 3 -->
+    <div class="phase ph3">
+      <div class="phase-badge">Phase 3 · Scaled</div>
+      <div class="phase-icon">🌐</div>
+      <div class="phase-title">Stable Server or Platform</div>
+      <div class="phase-subtitle">Accessible anywhere, by anyone</div>
+      <ul class="phase-items">
+        <li>IT-supported server <em>or</em> free platform (GitHub Pages, Netlify)</li>
+        <li><strong>Public or private URL — share across departments</strong></li>
+        <li>Tools versioned, backed up, always available</li>
+        <li>Cross-team access: Procurement, Billing, DT/IT</li>
+        <li>Good for: org-wide impact, permanent home</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="hub-contents">
+    <div class="hub-tag">🛠️ <span>Productivity tools</span></div>
+    <div class="hub-tag">📊 <span>Data dashboards</span></div>
+    <div class="hub-tag">📚 <span>Skill guides</span></div>
+    <div class="hub-tag">🖥️ <span>Demo templates</span></div>
+    <div class="hub-tag">📋 <span>Presentation kits</span></div>
+    <div class="hub-tag">🤝 <span>Shared by everyone, used by everyone</span></div>
   </div>
 </div>
 
 <!-- ━━━━ SLIDE 7: CLOSING ━━━━ -->
 <div class="slide" id="slide-7">
   <div class="eyebrow">The Takeaway</div>
-  <div class="big-tagline">
-    <span class="line">One file.</span>
-    <span class="line">Any browser.</span>
-    <span class="line accent">AI makes it simple.</span>
+  <div class="big-tagline" style="margin-bottom:28px;">
+    <span class="line">Build it. Share it.</span>
+    <span class="line accent">Make it last.</span>
   </div>
-  <div class="closing-pills">
-    <div class="closing-pill">📊 Accrual Summary 1.0</div>
-    <div class="closing-pill">🛠️ Order Number Formatter 1.0</div>
-    <div class="closing-pill">🖥️ Team system demos</div>
-    <div class="closing-pill">🌐 GitHub Pages — free hosting</div>
+
+  <!-- 3-column recap grid -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:920px;width:100%">
+
+    <div class="card" style="text-align:center;padding:20px 18px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🧰</div>
+      <h3 style="font-size:.95rem;margin-bottom:8px;color:var(--cyan)">What HTML can do</h3>
+      <div style="font-size:.83rem;color:var(--muted);line-height:1.6">
+        Data visualization<br>
+        Productivity tools<br>
+        System demos<br>
+        Reports & presentations
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;padding:20px 18px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">✨</div>
+      <h3 style="font-size:.95rem;margin-bottom:8px;color:var(--amber)">How AI makes it easy</h3>
+      <div style="font-size:.83rem;color:var(--muted);line-height:1.6">
+        Describe it in plain English<br>
+        AI writes the whole file<br>
+        Save → double-click → done<br>
+        No coding needed
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;padding:20px 18px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🌐</div>
+      <h3 style="font-size:.95rem;margin-bottom:8px;color:var(--green)">Where we're heading</h3>
+      <div style="font-size:.83rem;color:var(--muted);line-height:1.6">
+        A shared Team Hub<br>
+        All tools in one place<br>
+        24/7 · free · always growing<br>
+        Built by us, for us
+      </div>
+    </div>
+
   </div>
-  <p style="margin-top:30px;color:var(--muted);font-size:.98rem;max-width:560px;text-align:center">
-    You don't need to learn to code. Just describe what you need.<br>
-    <span style="color:var(--cyan);font-weight:600">That's the power of AI × HTML.</span>
+
+  <p style="margin-top:24px;color:var(--muted);font-size:.95rem;max-width:580px;text-align:center;line-height:1.7">
+    You don't need a programming background.<br>You just need a good idea — and the willingness to try.<br>
+    <span style="color:var(--cyan);font-weight:600">That's the whole point.</span>
   </p>
-  <div style="margin-top:28px;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:rgba(136,153,187,.45)">
+
+  <div style="margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:rgba(136,153,187,.4)">
     This presentation is itself an HTML file · No apps required · Made with AI
   </div>
 </div>
